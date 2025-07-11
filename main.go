@@ -25,8 +25,8 @@ func main() {
 	})
 	r.Get("/find/{genre}", handlers.FindByGenre)
 
-	fmt.Println("Listening on :8000")
-	err := http.ListenAndServe(":8000", r)
+	fmt.Println("Listening on :3000")
+	err := http.ListenAndServe(":3000", r)
 	if err != nil {
 		log.Fatal(err)
 	}
