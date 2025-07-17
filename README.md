@@ -10,3 +10,24 @@
 | GET    | `/find/{genre}`   | Search books by genre     |
 | GET    | `/authors`        | Retrieve all authors      |
 | GET    | `/authors/{id}`   | Retrieve an author by ID  |
+
+# Go Book Management
+
+## Run the App Directly
+
+```bash
+go run main.go
+```
+
+## Build the Go Binary
+
+```bash
+go build -o go-book .
+```
+
+## Run the Built Binary
+
+```bash
+./go-book
+```
+
