@@ -1,0 +1,10 @@
+# Don't copy these files into the container
+.git
+.gitignore
+README.md
+*.log
+tmp/
+*.swp
+*.swo
+.vscode
+.idea
