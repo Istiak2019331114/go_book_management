@@ -1,69 +1,99 @@
+# Go Book Management
+
+A simple book management API built with Go, Chi router, JWT authentication, and Cobra CLI. This app supports CRUD operations for books and authors, along with authentication.
+
+---
+
 ## 📘 API Endpoints
 
 | Method | Endpoint        | Description              | Auth Required?         |
-| ------ | --------------- | ------------------------ | ---------------------- |
-| POST   | `/login`        | Login and get JWT cookie | No                     |
-| GET    | `/books`        | Retrieve all books       | No                     |
-| GET    | `/books/{id}`   | Retrieve a book by ID    | No                     |
-| POST   | `/books`        | Add a new book           | Yes (JWT token cookie) |
-| PUT    | `/books/{id}`   | Update an existing book  | Yes (JWT token cookie) |
-| DELETE | `/books/{id}`   | Delete a book            | Yes (JWT token cookie) |
-| GET    | `/find/{genre}` | Search books by genre    | No                     |
-| GET    | `/authors`      | Retrieve all authors     | No                     |
-| GET    | `/authors/{id}` | Retrieve an author by ID | No                     |
+|--------|------------------|--------------------------|-------------------------|
+| POST   | `/login`         | Login and get JWT cookie | No                      |
+| GET    | `/books`         | Retrieve all books       | No                      |
+| GET    | `/books/{id}`    | Retrieve a book by ID    | No                      |
+| POST   | `/books`         | Add a new book           | Yes (JWT token cookie)  |
+| PUT    | `/books/{id}`    | Update an existing book  | Yes (JWT token cookie)  |
+| DELETE | `/books/{id}`    | Delete a book            | Yes (JWT token cookie)  |
+| GET    | `/find/{genre}`  | Search books by genre    | No                      |
+| GET    | `/authors`       | Retrieve all authors     | No                      |
+| GET    | `/authors/{id}`  | Retrieve an author by ID | No                      |
 
-# Go Book Management – Docker Commands
+---
 
-## Build the Docker Image
+## Docker Usage
+
+### Build Docker Image
 
 ```bash
 docker build -t go-book-app .
 ```
 
-## Run the Container
+### Run the Container (on port 8080)
 
-### Run and expose port 8080
 ```bash
 docker run -p 8080:8080 go-book-app --port 8080
 ```
 
-### Run and expose port 3000
-```bash
-docker run -p 3000:3000 go-book-app --port 3000
-```
+---
 
-## List Running Containers
+## Kubernetes Deployment (Using Kind)
 
-```bash
-docker ps
-```
+### Step 1: Push Image to Docker Hub (or use `kind load` for local dev)
 
-## View Logs
+If using Docker Hub:
 
 ```bash
-docker logs <container_id>
+docker tag go-book-app istiaka2i/bookapp:v1.0
+docker push istiaka2i/bookapp:v1.0
 ```
 
-## Stop a Container
+If using Kind locally:
 
 ```bash
-docker stop <container_id>
+kind load docker-image go-book-app
 ```
 
-## Rebuild After Code Changes
+### Step 2: Apply Kubernetes Manifest
 
 ```bash
-docker build -t go-book-app .
+kubectl apply -f go-book-app.yaml
 ```
 
-## Debug Inside Container
+### Step 3: Forward Port to Access App Locally
 
 ```bash
-docker exec -it <container_id> sh
+kubectl port-forward svc/go-book-service 4000:4000
 ```
 
-## Clean Up Stopped Containers
+Then access the app at:
 
-```bash
-docker container prune
 ```
+http://localhost:4000
+```
+
+---
+
+## 🔌 Port Mapping Explained
+
+| Level           | Port | Description                                                |
+|-----------------|------|------------------------------------------------------------|
+| Container Port  | 4000 | The Go app runs on this port inside the container          |
+| Target Port     | 4000 | Kubernetes service forwards traffic to this container port |
+| Node Port       | 30080| Exposes service on the node (not usable directly in `kind`)|
+| Host Port       | 4000 | Exposed using `kubectl port-forward` for local access      |
+
+**Note:** Since `kind` runs inside Docker, `NodePort` is not directly reachable. Use `kubectl port-forward` for access.
+
+---
+
+## Useful Docker Commands
+
+| Task                         | Command                               |
+|-----------------------------|---------------------------------------|
+| View running containers     | `docker ps`                           |
+| View container logs         | `docker logs <container_id>`          |
+| Stop a container            | `docker stop <container_id>`          |
+| Debug into a container      | `docker exec -it <container_id> sh`   |
+| Clean up stopped containers | `docker container prune`              |
+
+---
