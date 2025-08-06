@@ -17,6 +17,4 @@ WORKDIR /root/
 
 COPY --from=builder /go-book .
 
-EXPOSE 4000
-
 ENTRYPOINT ["./go-book", "serve"]
